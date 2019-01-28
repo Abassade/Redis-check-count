@@ -22,8 +22,11 @@ npm install dotenv --save
 ```bash
 node index.js
 ```
-## endpoints
-/uploads which is a POST method to upload .txt file
-/msisdn/?msisdn=samplevaluemsisdn  which is a GET method that allows you to get value as part of response
+### endpoint: POST method
+/  ===> A base route
 
+### endpoint: POST method
+/uploads  ===> to upload .txt file
 
+### endpoint: GET method that takes a query params
+/msisdn/?msisdn=samplevaluemsisdn  ===> allows you to get value as part of response
