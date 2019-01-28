@@ -60,7 +60,7 @@ app.post('/upload', upload.single('myFile'),(req,res)=>{
                 eachLineArray.forEach( (each) => {
                 let key = each.split(' ')[5];
 
-                client.exists('language', (err,reply)=> {
+                client.exists(key, (err,reply)=> {
                     if(!err) {
                      if(reply === 1) {
                         client.incr(key)
