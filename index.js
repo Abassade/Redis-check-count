@@ -29,9 +29,20 @@ const storage = multer.diskStorage({
           cb(null, file.fieldname+'.txt');
         }
       });
+
+      const fileFilter = (req, file, cb)=>{
+
+        if(file.mimetype === 'text/plain'){
+            cb(null, true);
+        }
+        else{
+            cb(null, false);
+        }
+    }
        
 const upload = multer({ 
-    storage: storage
+    storage: storage,
+    fileFilter: fileFilter
 })
 
 // base endpoint
@@ -64,10 +75,10 @@ app.post('/upload', upload.single('myFile'),(req,res)=>{
                     if(!err) {
                      if(reply === 1) {
                         client.incr(key)
-                        console.log('I am incr');
+                        //console.log('I am incr');
                      } else {
                         client.set(key, dflt);
-                        console.log('i am just setting')
+                        //console.log('i am just setting')
                      }
                     }
                    });
@@ -122,19 +133,19 @@ app.get('/msisdn', (req,res,next) => {
                     error : false,
                     statusCode: 200,
                     message: 'File fetched successfully',
-                    data: value});
+                    data: value
+                });
             }
         });
     }
     else{
-
         res.json({
             error : true,
             statusCode: 404,
             message: 'key does not exist',
         });
     }
-    });
+});
 
 //listening message
 app.listen(port, () => {
