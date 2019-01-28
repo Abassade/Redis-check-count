@@ -46,7 +46,7 @@ app.post('/upload', upload.single('myFile'),(req,res)=>{
     console.log(req.file);
     //read file from path and save it to redis database
     const file_path = './uploads/myFile.txt'
-    const dflt = 1;
+    const dflt = '1';
 
     const process = new Promise( (resolve, reject)=>{
         fs.readFile(file_path, (err, data)=> {
