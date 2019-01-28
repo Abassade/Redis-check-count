@@ -59,13 +59,18 @@ app.post('/upload', upload.single('myFile'),(req,res)=>{
                 
                 eachLineArray.forEach( (each) => {
                 let key = each.split(' ')[5];
-    
-                if(client.exists(key) === 1){
-                    client.incr(key)
-                }
-                else{
-                    client.set(key, dflt);
-                }
+
+                client.exists('language', (err,reply)=> {
+                    if(!err) {
+                     if(reply === 1) {
+                        client.incr(key)
+                        console.log('I am incr');
+                     } else {
+                        client.set(key, dflt);
+                        console.log('i am just setting')
+                     }
+                    }
+                   });
             });  
             resolve('success');
             console.log("File has been verified!")
