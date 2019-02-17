@@ -84,7 +84,8 @@ app.post('/upload', upload.single('myFile'),(req,res)=>{
                 console.log("File has been verified!")
                     res.send({error: false,
                         statusCode : 200,
-                        message : 'File has been verified'
+                        message : 'File has been verified',
+                        totalMsisdn: eachLineArray.length
                     });
             }
             else{
