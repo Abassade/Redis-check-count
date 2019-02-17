@@ -29,16 +29,15 @@ const storage = multer.diskStorage({
           cb(null, file.fieldname+'.txt');
         }
       });
+const fileFilter = (req, file, cb)=>{
 
-      const fileFilter = (req, file, cb)=>{
-
-        if(file.mimetype === 'text/plain'){
-            cb(null, true);
-        }
-        else{
-            cb(null, false);
-        }
+    if(file.mimetype === 'text/plain'){
+        cb(null, true);
     }
+    else{
+        cb(null, false);
+    }
+}
        
 const upload = multer({ 
     storage: storage,
@@ -52,12 +51,12 @@ app.get('/', (req, res)=> {
         });   
 });
 
-//route to upload file to redis
+//route to upload file and save it to redis
 app.post('/upload', upload.single('myFile'),(req,res)=>{
     console.log(req.file);
     //read file from path and save it to redis database
     const file_path = './uploads/myFile.txt'
-    const dflt = '1';
+    const dflt = 1;
 
     const process = new Promise( (resolve, reject)=>{
         fs.readFile(file_path, (err, data)=> {
@@ -65,30 +64,28 @@ app.post('/upload', upload.single('myFile'),(req,res)=>{
     
             if(data){
                 const  dataFromFile = data.toString();
-    
-            const eachLineArray = dataFromFile.split("\n");
+                const eachLineArray = dataFromFile.split("\n", dataFromFile.split("\n").length-1);
                 
                 eachLineArray.forEach( (each) => {
-                let key = each.split(' ')[5];
-
-                client.exists(key, (err,reply)=> {
-                    if(!err) {
-                     if(reply === 1) {
-                        client.incr(key)
-                        //console.log('I am incr');
-                     } else {
-                        client.set(key, dflt);
-                        //console.log('i am just setting')
-                     }
-                    }
-                   });
-            });  
-            resolve('success');
-            console.log("File has been verified!")
-                res.send({error: false,
-                    statusCode : 200,
-                    message : 'File has been verified'
-                });
+                    let key = each.split(' ')[5];;
+                    client.exists(key, (err,reply)=> {
+                        if(!err) {
+                            if(!reply === 1) {
+                                client.set(key, dflt);
+                                //console.log('i am just setting')
+                       
+                            }
+                            client.incr(key)
+                            //console.log('I am incr');
+                        }
+                    });
+                });  
+                resolve('success');
+                console.log("File has been verified!")
+                    res.send({error: false,
+                        statusCode : 200,
+                        message : 'File has been verified'
+                    });
             }
             else{
                 reject('Failed');
